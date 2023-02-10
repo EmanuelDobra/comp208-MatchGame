@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">MatchGame</string>
     <string name="desc">MatchTile</string>
+    <string name="score"># of Guesses: </string>
+    <string name="win">Congratulations, you won!</string>
+    <string name="replay">Play Again</string>
+    <string name="close">Close Game</string>
 </resources>

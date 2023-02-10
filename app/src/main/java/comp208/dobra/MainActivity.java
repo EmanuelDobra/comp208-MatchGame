@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -42,11 +43,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set first view
         setContentView(R.layout.activity_main);
+        // load board
         board = (TableLayout) findViewById(R.id.matchBoard);
+        // shuffle res array
         shuffleResources();
+        // load in images
         loadImages();
     }
+
+    // resets all of the cards and the game object, so the user can start anew
+    public void resetGame(View view) {
+        // switch back to game view
+        setContentView(R.layout.activity_main);
+        // find the board again
+        board = (TableLayout) findViewById(R.id.matchBoard);
+        // rebuild resources
+        resources = new int[]{
+                R.drawable.blue, R.drawable.cyan, R.drawable.green,
+                R.drawable.orange, R.drawable.pink, R.drawable.red,
+                R.drawable.blue, R.drawable.cyan, R.drawable.green,
+                R.drawable.orange, R.drawable.pink, R.drawable.red
+        };
+        // reset game stats
+        game = new Game();
+        // shuffle the res
+        shuffleResources();
+        // load images back in the board
+        loadImages();
+    }
+
+
+    // closes app
+    public void closeApp(View view) {
+        finish();
+        System.exit(0);
+    }
+
 
 
     // loads cards with default images
@@ -83,10 +117,30 @@ public class MainActivity extends AppCompatActivity {
                 lastImgFlipped = current.actualImgId;
                 img.setImageResource(current.actualImgId);
             } else {
+
                 // if so, check if images match
                 img.setImageResource(current.actualImgId);
                 if (lastImgFlipped == current.actualImgId) {
-                    // add to score?
+                    // increment pairs counter
+                    game.incrementMatchingPairs();
+
+                    // note down current score
+                    String guessesCounter = Float.toString((game.score+1)/2);
+
+                    // update score
+                    TextView score = (TextView)findViewById(R.id.currentScore);
+
+                    score.setText(guessesCounter);
+
+                    // check if user won
+                    if (game.matchingPairs > 5) {
+                        // go to score screen
+                        setContentView(R.layout.score_screen);
+
+                        // update score
+                        TextView guesses = (TextView)findViewById(R.id.scoreLabel);
+                        guesses.setText(guessesCounter);
+                    }
                 } else {
                     // flip back images after 0.5 seconds
                     final Handler handler = new Handler(Looper.getMainLooper());
